@@ -30,7 +30,7 @@ const SearchSong = () => {
             <View style={styles.searchBox}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Search SONG...!!!! now~!!!!!!!"
+                    placeholder="Search..."
                     value={query}
                     onChangeText={(text) => setQuery(text)}
                 />

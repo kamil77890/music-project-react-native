@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Button, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { styles } from '../styles/darkStyles';
 
-const SongCard = ({ item, onPlay }) => (
+const SongCard = ({ item, onPlay, rePLayPressed }) => (
     <View style={styles.card}>
         <Image source={{ uri: item.src }} style={styles.thumbnail} />
         <View style={styles.details}>
@@ -13,8 +13,11 @@ const SongCard = ({ item, onPlay }) => (
             <Text style={styles.liked}>
                 {item.liked ? '❤️ Liked' : '🤍 Not Liked'}
             </Text>
+
         </View>
-        <Button title="Play" color="#33BBCF" onPress={onPlay} />
+        <TouchableOpacity style={rePLayPressed ? styles.rePlayButton : styles.playButton} onPress={onPlay}>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Play</Text>
+        </TouchableOpacity>
     </View>
 );
 

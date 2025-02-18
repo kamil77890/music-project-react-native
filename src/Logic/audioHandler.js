@@ -25,20 +25,28 @@ const downloadSong = async (id) => {
   return fileUri;
 };
 
-export const playSound = async (id) => {
+export const playSound = async (id, rePlay) => {
   const fileUri = await downloadSong(id);
-
-  try {
-    if (currentSound) {
-      await currentSound.stopAsync();
-      await currentSound.unloadAsync();
+  if (currentSound) {
+    await currentSound.stopAsync();
+  }
+  if (rePlay) {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
+      currentSound = sound;
+      await currentSound.setIsLoopingAsync(true);
+      await currentSound.playAsync();
+    } catch (error) {
+      console.error("Błąd odtwarzania dźwięku:", error);
     }
-
-    const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
-    currentSound = sound;
-    await currentSound.playAsync();
-  } catch (error) {
-    console.error("Błąd odtwarzania dźwięku:", error);
+  } else {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
+      currentSound = sound;
+      await currentSound.playAsync();
+    } catch (error) {
+      console.error("Błąd odtwarzania dźwięku:", error);
+    }
   }
 };
 

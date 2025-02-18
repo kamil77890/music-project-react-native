@@ -7,7 +7,6 @@ export async function playSound(url) {
 export async function playSound(videoId) {
   if (currentSound) {
     await currentSound.stopAsync();
-    await currentSound.unloadAsync();
   }
 
   const { sound } = await Audio.Sound.createAsync({

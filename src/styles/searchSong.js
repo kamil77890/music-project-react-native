@@ -5,12 +5,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "0%",
+    color: "white",
   },
   title: {
     fontSize: 24,
     marginBottom: 40,
     fontWeight: "bold",
+    color: "white",
   },
   searchBox: {
     flexDirection: "row",
@@ -19,12 +20,14 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     width: "90%",
+    backgroundColor: "#00B",
   },
   input: {
     flex: 1,
     height: 40,
     fontSize: 16,
     paddingLeft: 10,
+    color: "white",
   },
   searchIcon: {
     fontSize: 24,
