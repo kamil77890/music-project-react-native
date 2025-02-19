@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { FaSearch } from 'react-icons/fa';
 import { getSongByString } from '../Logic/api/YT/utils';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { styles } from '../styles/searchSong';
+import YTsong from "./YTsong"
+
 
 const SearchSong = () => {
     const [query, setQuery] = useState('');
+    const [songs, setSongs] = useState([]);
     const { theme } = useContext(ThemeContext);
 
     useEffect(() => {
-        if (query) {
-            getSongByString(query).then((response) => {
-                console.log(response);
+        if (query.trim()) {
+            getSongByString(query).then((data) => {
+                setSongs(data);
             });
         }
     }, [query]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (query.trim()) {
-
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -34,12 +29,11 @@ const SearchSong = () => {
                     value={query}
                     onChangeText={(text) => setQuery(text)}
                 />
-                <TouchableOpacity onPress={() => handleSubmit()}>
-                    <Text style={styles.searchIcon}>🔍</Text>
-                </TouchableOpacity>
             </View>
+
+            <YTsong songs={songs} />
         </View>
     );
 };
 
-export default SearchSong;
+export default SearchSong

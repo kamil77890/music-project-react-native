@@ -4,7 +4,7 @@ import { FlatList, Text, View, TouchableOpacity, Button } from 'react-native';
 
 // import { CheckBox } from 'expo-checkbox';
 import React, { useState, useEffect } from 'react';
-import SongCard from './SongCard';
+import SongCard from './DowloandedSongCard';
 import { styles } from '../styles/darkStyles';
 
 
@@ -37,7 +37,7 @@ const MusicUI = () => {
             <View>
                 <Text style={styles.title}>Settings</Text>
 
-                <TouchableOpacity style={rePlay ? styles.reButton :styles.button} >
+                <TouchableOpacity style={rePlay ? styles.reButton : styles.button} >
                     <Button title="Naciśnij by oddtwarzać w kółko" style={styles.kułko} onPress={() => { setReplay(!rePlay) }} />
                 </TouchableOpacity>
 
