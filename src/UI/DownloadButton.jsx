@@ -18,7 +18,7 @@ const DownloadButton = ({ videoId, title, songs }) => {
             setLastId(newId);
 
             const response = await axios.get(
-                `http://192.168.141.1:5000/mp3?videoId=${videoId}&id=${newId}`,
+                `http://192.168.88.36:5000/mp3?videoId=${videoId}&id=${newId}`,
                 { responseType: "blob" }
             );
 

@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     color: "white",
+    backgroundColor: "#001033",
   },
   title: {
     fontSize: 24,
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     width: "90%",
-    backgroundColor: "#00B",
+    backgroundColor: "#1f2a5e",
   },
   input: {
     flex: 1,

@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://192.168.141.1:5000";
+const API_URL = "http://192.168.88.36:5000";
 
 export const fetchSongs = async () => {
   try {

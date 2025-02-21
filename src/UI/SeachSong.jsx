@@ -4,6 +4,7 @@ import { getSongByString } from '../Logic/api/YT/utils';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { styles } from '../styles/searchSong';
 import YTsong from "./YTsong"
+import Nav from './Navigator';
 
 
 const SearchSong = () => {
@@ -32,6 +33,7 @@ const SearchSong = () => {
             </View>
 
             <YTsong songs={songs} />
+            <Nav />
         </View>
     );
 };
