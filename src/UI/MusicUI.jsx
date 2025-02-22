@@ -1,6 +1,10 @@
 import { fetchSongs } from '../Logic/api/songService';
 import { playSound, pauseSound, playWithoutAnyHasitatting } from '../Logic/audioHandler';
 import { FlatList, Text, View, TouchableOpacity, Button } from 'react-native';
+import { IoArrowBackCircleSharp } from "react-icons/io5";
+import { useNavigation } from '@react-navigation/native';
+import Nav from './Navigator';
+
 
 // import { CheckBox } from 'expo-checkbox';
 import React, { useState, useEffect } from 'react';
@@ -13,6 +17,7 @@ const MusicUI = () => {
     const [currentSound, setCurrentSound] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [rePlay, setReplay] = useState(false)
+
 
     useEffect(() => {
         fetchSongs().then(setSongs);
@@ -62,6 +67,7 @@ const MusicUI = () => {
                     </TouchableOpacity>
                 )
             }
+            <Nav />
         </View >
     );
 }

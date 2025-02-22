@@ -7,7 +7,7 @@ const Nav = () => {
     const navigation = useNavigation();
 
     return <View style={styles.container}>
-        <Button title="Button 1" onPress={() => navigation.navigate("Music")} />
+        <Button title="Home" onPress={() => navigation.navigate("Home")} />
         <TouchableOpacity onPress={() => navigation.navigate("Music")}>
             <MdLibraryMusic size={30} />
         </TouchableOpacity>

@@ -1,9 +1,11 @@
 import axios from "axios";
-const API_URL = "http://192.168.88.36:5000";
+import { ServerIpContext } from "../../contexts/ServerIpContext";
 
 export const fetchSongs = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/songs`);
+    const { serverIp } = useContext(ServerIpContext);
+
+    const response = await axios.get(`${serverIp}/api/songs`);
 
     const formattedSongs = response.data.map((item) => {
       const key = Object.keys(item)[0];

@@ -2,23 +2,27 @@ import React, { useContext, useState, useEffect } from "react";
 import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from "react-native";
 import axios from "axios";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { ServerIpContext } from "../contexts/ServerIpContext";
 import { getDuration, gettingSongsIds, sendData } from "../../utils";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
 const DownloadButton = ({ videoId, title, songs }) => {
     const { theme } = useContext(ThemeContext);
+    const { serverIp } = useContext(ServerIpContext);
+
     const [download, setDownload] = useState(false);
     const [lastId, setLastId] = useState(null);
 
     const handleDownload = async () => {
         setDownload(true);
         try {
-            const newId = await gettingSongsIds();
+            // Ensure the ID is being generated correctly
+            const newId = await gettingSongsIds(serverIp); // Make sure this doesn't call hooks!
             setLastId(newId);
 
             const response = await axios.get(
-                `http://192.168.88.36:5000/mp3?videoId=${videoId}&id=${newId}`,
+                `${serverIp}/mp3?videoId=${videoId}&id=${newId}`,
                 { responseType: "blob" }
             );
 
@@ -57,14 +61,14 @@ const DownloadButton = ({ videoId, title, songs }) => {
 
     return (
         <TouchableOpacity style={[styles.button, { backgroundColor: theme }]} onPress={handleDownload} disabled={download}>
-            {download ? <ActivityIndicator color="#fff" /> : <Text style={styles.text}>Dowloand</Text>}
+            {download ? <ActivityIndicator color="#ffe" /> : <Text style={styles.text}>Download</Text>}
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     button: { padding: 10, borderRadius: 5, alignItems: "center", justifyContent: "center", marginTop: 10 },
-    text: { color: "#ff0000", fontSize: 14, fontWeight: "bold" },
+    text: { color: "#ff00fe", fontSize: 14, fontWeight: "bold" },
 });
 
 export default DownloadButton;

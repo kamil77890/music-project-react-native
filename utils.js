@@ -1,3 +1,6 @@
+import React from "react";
+import axios from "axios";
+
 export const getDuration = (song) => {
   const duration = song.contentDetails.duration;
   const re = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
@@ -15,13 +18,31 @@ export const getDuration = (song) => {
   }
 };
 
-export const gettingSongsIds = async () => {
-  return Math.random().toString(36).substring(7);
+export const gettingSongsIds = async (serverIp) => {
+  try {
+    const response = await axios.get(`${serverIp}/api/songs`);
+    const data = response.data;
+
+    const ids = data.map((item) => {
+      const key = Object.keys(item)[0];
+      return parseInt(key, 10);
+    });
+
+    const maxId = Math.max(...ids, 0);
+    const newId = maxId + 1;
+
+    return newId;
+  } catch (error) {
+    console.error("Error fetching song IDs:", error);
+    throw error;
+  }
 };
 
 export const sendData = async (data) => {
+  const { serverIp } = React.useContext(ServerIpContext);
+
   try {
-    const response = await fetch("http://localhost:5000/song-data", {
+    const response = await fetch(`${serverIp}/api/data`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -31,3 +52,4 @@ export const sendData = async (data) => {
     console.error("Error sending data:", error);
   }
 };
+

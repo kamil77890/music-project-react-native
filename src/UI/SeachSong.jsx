@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { getSongByString } from '../Logic/api/YT/utils';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { styles } from '../styles/searchSong';
+import { getServerIpFromStorage } from "../localStorage/utils"
 import YTsong from "./YTsong"
 import Nav from './Navigator';
 
@@ -12,13 +13,13 @@ const SearchSong = () => {
     const [songs, setSongs] = useState([]);
     const { theme } = useContext(ThemeContext);
 
-    useEffect(() => {
-        if (query.trim()) {
-            getSongByString(query).then((data) => {
-                setSongs(data);
-            });
-        }
-    }, [query]);
+
+    const handleKeyPress = async () => {
+        const pls_work = await getSongByString(query)
+        setSongs(pls_work)
+    }
+
+
 
     return (
         <View style={styles.container}>
@@ -29,6 +30,7 @@ const SearchSong = () => {
                     placeholder="Search..."
                     value={query}
                     onChangeText={(text) => setQuery(text)}
+                    onKeyPress={handleKeyPress}
                 />
             </View>
 
