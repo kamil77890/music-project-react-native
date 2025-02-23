@@ -1,74 +1,78 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { FlatList, Text, View, TouchableOpacity, Button, ScrollView } from 'react-native';
 import { fetchSongs } from '../Logic/api/songService';
-import { playSound, pauseSound, playWithoutAnyHasitatting } from '../Logic/audioHandler';
-import { FlatList, Text, View, TouchableOpacity, Button } from 'react-native';
-import { IoArrowBackCircleSharp } from "react-icons/io5";
-import { useNavigation } from '@react-navigation/native';
+import { playSound, pauseSound } from '../Logic/audioHandler';
+import { ServerIpContext } from "../contexts/ServerIpContext";
 import Nav from './Navigator';
-
-
-// import { CheckBox } from 'expo-checkbox';
-import React, { useState, useEffect } from 'react';
 import SongCard from './DowloandedSongCard';
-import { styles } from '../styles/darkStyles';
-
+import { ThemeContext } from "../contexts/ThemeContext";
+import { getStyles } from "../styles/styles";
 
 const MusicUI = () => {
     const [songs, setSongs] = useState([]);
-    const [currentSound, setCurrentSound] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [rePlay, setReplay] = useState(false)
-
+    const [rePlay, setReplay] = useState(false);
+    const { serverIp } = useContext(ServerIpContext);
+    const { theme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
 
     useEffect(() => {
-        fetchSongs().then(setSongs);
+        fetchSongs(serverIp)
+            .then((fetchedSongs) => setSongs(fetchedSongs))
+            .catch((err) => console.error("Error fetching songs:", err));
+    }, [serverIp]);
 
-        return () => {
-            if (currentSound) {
-                currentSound.unloadAsync();
-            }
-        };
-    }, [currentSound]);
+    const sanitizeFilename = (name) => {
+        return name.replace(/[\\/:*?"<>|]/g, "").trim();
+    };
 
-    const handlePlay = (songId) => {
-        const sound = playSound(songId, rePlay);
-        setCurrentSound(sound);
-        setIsPlaying(true)
-    }
-
-
+    const handlePlay = async (songName, id) => {
+        try {
+            await playSound(serverIp, id, sanitizeFilename(songName), rePlay);
+            setIsPlaying(true);
+        } catch (error) {
+            console.error("Error in handlePlay:", error);
+        }
+    };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View>
                 <Text style={styles.title}>Settings</Text>
-
-                <TouchableOpacity style={rePlay ? styles.reButton : styles.button} >
-                    <Button title="Naciśnij by oddtwarzać w kółko" style={styles.kułko} onPress={() => { setReplay(!rePlay) }} />
+                <TouchableOpacity style={rePlay ? styles.reTogglePlay : styles.togglePlay}>
+                    <Button title="Toggle Replay" onPress={() => setReplay(!rePlay)} />
                 </TouchableOpacity>
-
             </View>
-            {songs ?
+            {songs && songs.length > 0 ? (
                 <FlatList
                     style={styles.list}
                     data={songs}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <SongCard item={item} onPlay={() => handlePlay(item.id)} rePLayPressed={rePlay} />
+                        <SongCard
+                            item={item}
+                            onPlay={() => handlePlay(item.title, item.id)}
+                            rePLayPressed={rePlay}
+                        />
                     )}
-                /> : ""}
-
-            {
-                isPlaying && (
-                    <TouchableOpacity
-                        style={styles.pauseButton}
-                        onPress={pauseSound}
-                    >
-                        <Text style={styles.pauseButtonText}>Pause</Text>
-                    </TouchableOpacity>
-                )
-            }
+                />
+            ) : (
+                <Text style={styles.loading}>No songs found</Text>
+            )}
+            {isPlaying && (
+                <TouchableOpacity
+                    style={styles.pauseButton}
+                    onPress={async () => {
+                        await pauseSound();
+                        setIsPlaying(false);
+                    }}
+                >
+                    <Text style={styles.pauseButtonText}>Pause</Text>
+                </TouchableOpacity>
+            )}
             <Nav />
-        </View >
+        </ScrollView>
     );
-}
-export default MusicUI
+};
+
+export default MusicUI;

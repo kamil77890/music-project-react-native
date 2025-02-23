@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView } from 'react-native';
 import { getSongByString } from '../Logic/api/YT/utils';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { styles } from '../styles/searchSong';
-import { getServerIpFromStorage } from "../localStorage/utils"
+import { getStyles } from '../styles/styles';
+
 import YTsong from "./YTsong"
 import Nav from './Navigator';
 
@@ -11,10 +11,11 @@ import Nav from './Navigator';
 const SearchSong = () => {
     const [query, setQuery] = useState('');
     const [songs, setSongs] = useState([]);
-    const { theme } = useContext(ThemeContext);
+    const { theme, toggleTheme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
 
 
-    const handleKeyPress = async () => {
+    const handleSearch = async () => {
         const pls_work = await getSongByString(query)
         setSongs(pls_work)
     }
@@ -22,7 +23,8 @@ const SearchSong = () => {
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
+            <Button title={theme} onPress={toggleTheme} />
             <Text style={styles.title}>Songs for BEATER!!!</Text>
             <View style={styles.searchBox}>
                 <TextInput
@@ -30,13 +32,18 @@ const SearchSong = () => {
                     placeholder="Search..."
                     value={query}
                     onChangeText={(text) => setQuery(text)}
-                    onKeyPress={handleKeyPress}
+                />
+                <Button
+                    style={styles.buttonS}
+                    title="NOW!"
+                    onPress={handleSearch}
                 />
             </View>
 
             <YTsong songs={songs} />
             <Nav />
-        </View>
+        </ScrollView>
+
     );
 };
 

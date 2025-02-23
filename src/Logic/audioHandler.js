@@ -3,50 +3,49 @@ import { Audio } from "expo-av";
 
 let currentSound = null;
 
-const downloadSong = async (id) => {
+const downloadSong = async (serverIp, id, name) => {
   const folderUri = `${FileSystem.documentDirectory}songs/`;
-  const fileUri = `${folderUri}${id}.mp3`;
-  const url = `http://192.168.141.1:5000/songs/${id}.mp3`;
+  const fileUri = `${folderUri}${name}.mp3`;
+  console.log("Server IP:", serverIp);
 
+  const url = `${serverIp}/songs/${id}.mp3`;
+
+  // Ensure folder exists
   const folderInfo = await FileSystem.getInfoAsync(folderUri);
   if (!folderInfo.exists) {
     await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
   }
 
+  // Download the file if it doesn't exist
   const fileInfo = await FileSystem.getInfoAsync(fileUri);
   if (!fileInfo.exists) {
-    const download = FileSystem.createDownloadResumable(url, fileUri);
-    await download.downloadAsync();
-    console.log(`Pobrano plik do: ${fileUri}`);
+    const downloadResumable = FileSystem.createDownloadResumable(url, fileUri);
+    await downloadResumable.downloadAsync();
+    console.log(`Downloaded file to: ${fileUri}`);
   } else {
-    console.log("Plik już istnieje, pomijam pobieranie");
+    console.log("File already exists, skipping download");
   }
 
   return fileUri;
 };
 
-export const playSound = async (id, rePlay) => {
-  const fileUri = await downloadSong(id);
-  if (currentSound) {
-    await currentSound.stopAsync();
-  }
-  if (rePlay) {
-    try {
-      const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
-      currentSound = sound;
+export const playSound = async (serverIp, id, name, rePlay) => {
+  console.log(id, name, rePlay);
+  try {
+    const fileUri = await downloadSong(serverIp, id, name);
+    if (currentSound) {
+      await currentSound.stopAsync();
+    }
+    // Create and play the new sound
+    const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
+    currentSound = sound;
+    if (rePlay) {
       await currentSound.setIsLoopingAsync(true);
-      await currentSound.playAsync();
-    } catch (error) {
-      console.error("Błąd odtwarzania dźwięku:", error);
     }
-  } else {
-    try {
-      const { sound } = await Audio.Sound.createAsync({ uri: fileUri });
-      currentSound = sound;
-      await currentSound.playAsync();
-    } catch (error) {
-      console.error("Błąd odtwarzania dźwięku:", error);
-    }
+    await currentSound.playAsync();
+  } catch (error) {
+    console.error("Error playing sound:", error);
+    throw error;
   }
 };
 

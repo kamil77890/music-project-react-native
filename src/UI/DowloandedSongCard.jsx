@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { styles } from '../styles/darkStyles';
+import { getStyles } from '../styles/styles';
+import { ThemeContext } from '../contexts/ThemeContext';
 
-const SongCard = ({ item, onPlay, rePLayPressed }) => (
-    <View style={styles.card}>
+
+const SongCard = ({ item, onPlay, rePLayPressed }) => {
+    const { theme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
+    return <View style={styles.card}>
         <Image source={{ uri: item.src }} style={styles.thumbnail} />
         <View style={styles.details}>
             <Text style={styles.title}>{item.title}</Text>
@@ -15,10 +19,10 @@ const SongCard = ({ item, onPlay, rePLayPressed }) => (
             </Text>
 
         </View>
-        <TouchableOpacity style={rePLayPressed ? styles.rePlayButton : styles.playButton} onPress={onPlay}>
+        <TouchableOpacity style={rePLayPressed ? styles.reButton : styles.button} onPress={onPlay}>
             <Text style={{ color: 'white', fontWeight: 'bold' }}>Play</Text>
         </TouchableOpacity>
     </View>
-);
+};
 
 export default SongCard;

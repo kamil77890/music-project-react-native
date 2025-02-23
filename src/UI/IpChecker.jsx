@@ -1,30 +1,35 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, Button, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { ServerIpContext } from "../contexts/ServerIpContext";
-import { getServerIpFromStorage, setServerIpToStorage, clearServerIpFromStorage } from "../localStorage/utils";
-import { styles } from "../styles/ipinput.js";
+import { storeData, getData, deleteData } from "../localStorage/utils";
+import { ThemeContext } from "../contexts/ThemeContext";
+import { getStyles } from "../styles/styles";
+import { useNavigation } from "@react-navigation/native";
 
-const IpChecker = ({ serverIp: propServerIp, onFail, navigation }) => {
+const IpChecker = ({ serverIp: propServerIp, onFail }) => {
     const [loading, setLoading] = useState(false);
     const [inputIp, setInputIp] = useState(propServerIp || "");
     const [connectionStatus, setConnectionStatus] = useState(null);
-
     const { setServerIp } = useContext(ServerIpContext);
+    const { theme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const checkStoredIp = async () => {
             try {
-                const storedIp = await getServerIpFromStorage();
+                const storedIp = await getData();
                 console.log("Stored IP:", storedIp);
                 if (storedIp) {
                     const isValid = await checkServerConnection(storedIp);
                     if (isValid) {
-                        setServerIpToStorage(storedIp);
+                        storeData(storedIp);
                         setServerIp(storedIp);
-                        navigation.replace("Home"); // Navigate to main page automatically
+                        navigation.navigate("Home")
                     } else {
-                        clearServerIpFromStorage();
+                        // Delete the invalid IP from storage
+                        deleteData();
                     }
                 }
             } catch (error) {
@@ -56,13 +61,15 @@ const IpChecker = ({ serverIp: propServerIp, onFail, navigation }) => {
         const isValid = await checkServerConnection(inputIp);
 
         if (isValid) {
-            setServerIpToStorage(inputIp);
+            storeData(inputIp);
             setServerIp(inputIp);
             setConnectionStatus("success");
             navigation.replace("Home"); // Navigate to main page on success
         } else {
             onFail();
             setConnectionStatus("error");
+            // Delete the invalid IP from storage
+            deleteData();
         }
 
         setLoading(false);
@@ -82,8 +89,12 @@ const IpChecker = ({ serverIp: propServerIp, onFail, navigation }) => {
             <Button title="Check Connection" onPress={checkConnection} />
 
             {loading && <ActivityIndicator size="large" color="#00ff00" />}
-            {connectionStatus === "success" && <Text style={styles.success}>✅ Connected successfully!</Text>}
-            {connectionStatus === "error" && <Text style={styles.error}>❌ Failed to connect. IP removed.</Text>}
+            {connectionStatus === "success" && (
+                <Text style={styles.success}>✅ Connected successfully!</Text>
+            )}
+            {connectionStatus === "error" && (
+                <Text style={styles.error}>❌ Failed to connect. IP removed.</Text>
+            )}
         </View>
     );
 };

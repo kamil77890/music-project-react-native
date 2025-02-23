@@ -1,10 +1,7 @@
 import axios from "axios";
-import { ServerIpContext } from "../../contexts/ServerIpContext";
 
-export const fetchSongs = async () => {
+export const fetchSongs = async (serverIp) => {
   try {
-    const { serverIp } = useContext(ServerIpContext);
-
     const response = await axios.get(`${serverIp}/api/songs`);
 
     const formattedSongs = response.data.map((item) => {

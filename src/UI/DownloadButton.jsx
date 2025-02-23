@@ -17,8 +17,7 @@ const DownloadButton = ({ videoId, title, songs }) => {
     const handleDownload = async () => {
         setDownload(true);
         try {
-            // Ensure the ID is being generated correctly
-            const newId = await gettingSongsIds(serverIp); // Make sure this doesn't call hooks!
+            const newId = await gettingSongsIds(serverIp);
             setLastId(newId);
 
             const response = await axios.get(
@@ -33,7 +32,7 @@ const DownloadButton = ({ videoId, title, songs }) => {
                 await Sharing.shareAsync(fileUri);
             }
 
-            await sendSongData(newId);
+            await sendSongData(newId, ser);
         } catch (error) {
             console.error("Download error:", error);
         } finally {

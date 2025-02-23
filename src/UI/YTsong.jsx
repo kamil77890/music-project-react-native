@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import DownloadButton from "./DownloadButton";
 import { getDuration } from "../../utils";
+import { ThemeContext } from "../contexts/ThemeContext";
+import { getStyles } from "../styles/styles";
 
 const Songs = ({ songs }) => {
+    const { theme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
     const filteredSongs = songs
         .map((song) => ({ ...song, duration: getDuration(song) }))
         .filter((song) => song.duration.minutes > 1 && song.duration.minutes < 12)
         .filter((song) => !song.snippet.title.includes("#"));
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             {filteredSongs.map((song) => (
                 <View style={styles.song} key={song.id}>
                     <View style={styles.imageContainer}>

@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 
 export const getDuration = (song) => {
@@ -38,9 +37,7 @@ export const gettingSongsIds = async (serverIp) => {
   }
 };
 
-export const sendData = async (data) => {
-  const { serverIp } = React.useContext(ServerIpContext);
-
+export const sendData = async (data, serverIp) => {
   try {
     const response = await fetch(`${serverIp}/api/data`, {
       method: "POST",
@@ -52,4 +49,3 @@ export const sendData = async (data) => {
     console.error("Error sending data:", error);
   }
 };
-
